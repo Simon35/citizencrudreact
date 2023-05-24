@@ -35,6 +35,9 @@ function Crud() {
         axios.post(url,savedata).then((result)=>{
             alert("Save successfully :)");
         })
+        .catch((error)=>{
+            
+        })
     }
 
     const handleEdit=()=>{
