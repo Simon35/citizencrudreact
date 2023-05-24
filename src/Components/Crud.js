@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import Table from 'react-bootstrap/Table'
 import Modal from 'react-bootstrap/Modal'
 import Button from 'react-bootstrap/Button'
+import Badge from 'react-bootstrap/Badge'
 import axios from 'axios'
 
 function Crud() {
@@ -24,7 +25,7 @@ function Crud() {
 
     const getData=()=>{
         axios.get('https://localhost:7013/api/Citizen').then((result)=>{
-            //console.log("LE get: "+ result.data);
+            //console.log("Get Data "+ JSON.stringify(result));
             //alert("Save successfully :)");
             setData(result.data);
         })
@@ -125,7 +126,7 @@ function Crud() {
                                         <td>{item.name}</td>
                                         <td>{item.city}</td>
                                         <td>{item.age}</td>
-                                        <td>{item.isActive}</td>
+                                        <td>{item.isActive== true ? <Badge bg="primary">Active</Badge> : <Badge bg="warning">Inactive</Badge>}</td>
                                         <td>
                                             <button type='button' className='btn btn-primary px-2' onClick={()=>handleEdit()}>Edit</button>
                                             <button type='button' className='btn btn-danger'>Delete</button>
