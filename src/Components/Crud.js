@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import Table from 'react-bootstrap/Table'
 import Modal from 'react-bootstrap/Modal'
 import Button from 'react-bootstrap/Button'
@@ -6,14 +6,33 @@ import axios from 'axios'
 
 function Crud() {
     const [data,setData]=useState([]);
-
-    /**
-     * Add fields
-     */
     const [name,setCitizenName]=useState('');
     const [city,setCitizenCity]=useState('');
     const [age,setCitizenAge]=useState('');
     const [isactive,setCitizenStatus]=useState('');
+    
+    /**
+     * Add fields
+     */
+    
+    /**
+     * useEffet : hook d'effet, permet d'avoir un état local
+     */
+    useEffect(()=>{
+        getData();
+    })
+
+    const getData=()=>{
+        axios.get('https://localhost:7013/api/Citizen').then((result)=>{
+            //console.log("LE get: "+ result.data);
+            //alert("Save successfully :)");
+            setData(result.data);
+        })
+        .catch((error)=>{
+            console.log(error);
+        })
+
+    }
 
     const handleIsactive=(e)=>{
         if (e.target.checked)
@@ -23,6 +42,7 @@ function Crud() {
             setCitizenStatus(false);
         }
     }
+
     const handleSave=()=>{
         const url = 'https://localhost:7013/api/Citizen';
         const savedata = {
@@ -33,10 +53,12 @@ function Crud() {
         }
         
         axios.post(url,savedata).then((result)=>{
-            alert("Save successfully :)");
+            console.log("Get Data "+ JSON.stringify(result));
+            //alert("Save successfully :)");
+            //setData(result.data);
         })
         .catch((error)=>{
-            
+            console.log(error);
         })
     }
 
@@ -44,6 +66,9 @@ function Crud() {
         handleShow();
     }
 
+    /**
+     * Modal
+    */
     const [show,setShow]=useState(false);
     const handleClose=()=>setShow(false);
     const handleShow=()=>setShow(true);
@@ -81,32 +106,36 @@ function Crud() {
                 <Table>
                     <thead>
                         <tr>
-                        <th>
-                            #
-                        </th>
-                        <th>
-                            Name
-                        </th>
-                        <th>
-                            City
-                        </th>
-                        <th>
-                            Age
-                        </th>
-                        <th>
-                            is active
-                        </th>
+                        <th>                      #                        </th>
+                        <th>                            Name                        </th>
+                        <th>                            City                        </th>
+                        <th>                            Age                        </th>
+                        <th>                            Status                        </th>
+                        <th>                            Action                        </th>
                         </tr>
                     </thead>
                     <tbody>
-                    <tr>
-                        <td>1</td>
-                        <td>1</td>
-                        <td>1</td>
-                        <td>1</td>
-                    <td><button type='button' className='btn btn-primary px-2' onClick={()=>handleEdit()}>Edit</button>
-                        <button type='button' className='btn btn-danger'>Delete</button></td>
-                        </tr>
+                        {
+                            data && data.length > 0 ? 
+                            data.map((item,index)=>{
+                                return(
+                                
+                                    <tr key={index}>
+                                        <td>{item.id}</td>
+                                        <td>{item.name}</td>
+                                        <td>{item.city}</td>
+                                        <td>{item.age}</td>
+                                        <td>{item.isactive}</td>
+                                        <td>
+                                            <button type='button' className='btn btn-primary px-2' onClick={()=>handleEdit()}>Edit</button>
+                                            <button type='button' className='btn btn-danger'>Delete</button>
+                                        </td>
+                                    </tr>
+                                )
+                            })
+                            :
+                            "No Data"
+                        }
                     </tbody>
 
                 </Table>
