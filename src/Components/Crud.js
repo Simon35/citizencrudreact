@@ -2,8 +2,41 @@ import React, { useState } from 'react'
 import Table from 'react-bootstrap/Table'
 import Modal from 'react-bootstrap/Modal'
 import Button from 'react-bootstrap/Button'
+import axios from 'axios'
 
 function Crud() {
+    const [data,setData]=useState([]);
+
+    /**
+     * Add fields
+     */
+    const [name,setCitizenName]=useState('');
+    const [city,setCitizenCity]=useState('');
+    const [age,setCitizenAge]=useState('');
+    const [isactive,setCitizenStatus]=useState('');
+
+    const handleIsactive=(e)=>{
+        if (e.target.checked)
+        {
+            setCitizenStatus(true);
+        }else{
+            setCitizenStatus(false);
+        }
+    }
+    const handleSave=()=>{
+        const url = 'https://localhost:7013/api/Citizen';
+        const savedata = {
+            "Name": name,
+            "City": city,
+            "Age": age,
+            "IsActive": isactive
+        }
+        
+        axios.post(url,savedata).then((result)=>{
+            alert("Save successfully :)");
+        })
+    }
+
     const handleEdit=()=>{
         handleShow();
     }
@@ -14,26 +47,26 @@ function Crud() {
 
 
   return (
-    <div classname="container">
+    <div className="container">
         <div className='row'>
             <div className='col-6'>
                 <label>Name</label>
-                <input type='text' className='form-control Name' name='Name'/>
+                <input type='text' className='form-control name' name='Name' onChange={(e)=>setCitizenName(e.target.value)}/>
             </div>
             <div className='col-6'>
                 <label>City</label>
-                <input type='text' className='form-control City' name='City'/>
+                <input type='text' className='form-control city' name='City' onChange={(e)=>setCitizenCity(e.target.value)}/>
             </div>
             <div className='col-6'>
                 <label>Age</label>
-                <input type='text' className='form-control Age' name='Age' />
+                <input type='text' className='form-control age' name='Age' onChange={(e)=>setCitizenAge(e.target.value)} />
             </div>
             <div className='col-6'>
                 <label>Is Active</label>
-                <input type='checkbox' className='form-control IsActive' name='IsActive' />
+                <input type='checkbox' className='IsActive' name='IsActive' onChange={handleIsactive} />
             </div>
             <div className='col-12'>
-                <button type='button' className='btn btn-primary'>Save</button>
+                <button type='button' className='btn btn-primary' onChange={()=>handleSave()}>Save</button>
             </div>
         </div>
         {/** Table */}
