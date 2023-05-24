@@ -125,7 +125,7 @@ function Crud() {
                                         <td>{item.name}</td>
                                         <td>{item.city}</td>
                                         <td>{item.age}</td>
-                                        <td>{item.isactive}</td>
+                                        <td>{item.isActive}</td>
                                         <td>
                                             <button type='button' className='btn btn-primary px-2' onClick={()=>handleEdit()}>Edit</button>
                                             <button type='button' className='btn btn-danger'>Delete</button>
