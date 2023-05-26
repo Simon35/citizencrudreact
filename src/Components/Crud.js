@@ -6,16 +6,25 @@ import Badge from 'react-bootstrap/Badge'
 import axios from 'axios'
 
 function Crud() {
+    
     const [data,setData]=useState([]);
+    /**
+     * Add fields
+    */
     const [name,setCitizenName]=useState('');
     const [city,setCitizenCity]=useState('');
     const [age,setCitizenAge]=useState('');
     const [isactive,setCitizenStatus]=useState('');
-    
+
     /**
-     * Add fields
-     */
-    
+     * Edit fields
+    */
+    const [editid,setCitizenEditId]=useState('');
+    const [editname,setCitizenEditName]=useState('');
+    const [editcity,setCitizenEditCity]=useState('');
+    const [editage,setCitizenEditAge]=useState('');
+    const [editisactive,setCitizenEditStatus]=useState('');
+
     /**
      * useEffet : hook d'effet, permet d'avoir un état local
      */
@@ -44,6 +53,15 @@ function Crud() {
         }
     }
 
+    const handleiseditactive=(e)=>{
+        if (e.target.checked)
+        {
+            setCitizenEditStatus(true);
+        }else{
+            setCitizenEditStatus(false);
+        }
+    }
+
     const handleSave=()=>{
         const url = 'https://localhost:7013/api/Citizen';
         const savedata = {
@@ -63,8 +81,40 @@ function Crud() {
         })
     }
 
-    const handleEdit=()=>{
+    const handleEdit=(id)=>{
         handleShow();
+        setCitizenEditId('');
+        setCitizenEditName('');
+        setCitizenEditCity('');
+        setCitizenEditAge('');
+        setCitizenEditStatus(false);
+
+        const editurl='https://localhost:7013/api/Citizen/'+id
+        axios.get(editurl).then((result)=>{
+            setCitizenEditId(result.data.id);
+            setCitizenEditName(result.data.name);
+            setCitizenEditCity(result.data.city);
+            setCitizenEditAge(result.data.age);
+            setCitizenEditStatus(result.data.isActive);
+    
+        }).catch((error)=>{
+            console.log(error);
+        })
+    }
+
+    const handleEditSave=(id)=>{
+        const updateurl=`https://localhost:7013/api/Citizen/${editid}`;
+        const editsavedata = {
+            "id": editid,
+            "name": editname,
+            "city": editcity,
+            "age": editage,
+            "isActive": editisactive
+        }
+        axios.get(updateurl,editsavedata).then((result)=>{
+            alert("Update successfully, Great");
+            handleClose();
+        })
     }
 
     /**
@@ -128,7 +178,7 @@ function Crud() {
                                         <td>{item.age}</td>
                                         <td>{item.isActive== true ? <Badge bg="primary">Active</Badge> : <Badge bg="warning">Inactive</Badge>}</td>
                                         <td>
-                                            <button type='button' className='btn btn-primary px-2' onClick={()=>handleEdit()}>Edit</button>
+                                            <button type='button' className='btn btn-primary px-2' onClick={()=>handleEdit(item.id)}>Edit</button>
                                             <button type='button' className='btn btn-danger'>Delete</button>
                                         </td>
                                     </tr>
@@ -150,20 +200,27 @@ function Crud() {
             <Modal.Body>
             <div className='row'>
             <div className='col-6'>
+                <label>Id</label>
+                <input type='text' className='form-control editId' name='EditId' value={editid} onChange={(e)=>setCitizenEditId(e.target.value)}/>
+            </div>
+            <div className='col-6'>
                 <label>Name</label>
-                <input type='text' className='form-control EditName' name='EditName'/>
+                <input type='text' className='form-control editName' name='EditName' value={editname} onChange={(e)=>setCitizenEditName(e.target.value)}/>
             </div>
             <div className='col-6'>
                 <label>City</label>
-                <input type='text' className='form-control EditCity' name='EditCity'/>
+                <input type='text' className='form-control editCity' name='EditCity' value={editcity} onChange={(e)=>setCitizenEditCity(e.target.value)}/>
             </div>
             <div className='col-6'>
                 <label>Age</label>
-                <input type='text' className='form-control EditAge' name='EditAge' />
+                <input type='text' className='form-control editAge' name='EditAge' value={editage} onChange={(e)=>setCitizenEditId(e.target.value)} />
             </div>
             <div className='col-6'>
                 <label>Is Active</label>
-                <input type='checkbox' className='form-control EditIsActive' name='EditIsActive' />
+                <input type='checkbox' className='editIsActive' name='EditIsActive' value={editisactive} 
+                        checked={editisactive==true?true:false}
+                        onChange={handleiseditactive}
+                />
             </div>
         </div>
 
@@ -172,6 +229,8 @@ function Crud() {
                 <Button variant="secondary" onClick={handleClose}>
                     Close
                 </Button>
+                {/**
+                 onClick={()=>handleEditSave(editid)}*/}
                 <Button variant="primary">
                     Update
                 </Button>
